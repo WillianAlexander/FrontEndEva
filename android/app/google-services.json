@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "687011483310",
+    "project_id": "login-743cd",
+    "storage_bucket": "login-743cd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687011483310:android:57bc0edd12ac2a7988273f",
+        "android_client_info": {
+          "package_name": "com.example.eva"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgLtYP1Oq2vbqGDYTM5vV9vTH4_0xL4tg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
