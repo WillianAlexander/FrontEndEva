@@ -1,4 +1,6 @@
 import 'package:eva/home_page.dart';
+import 'package:eva/pages/login_page.dart';
+import 'package:eva/theme/apptheme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,7 @@ void main() async {
   } else {
     await FirebaseAuth.instance.signOut();
   }
+
   runApp(const MyApp());
 }
 
@@ -24,18 +27,28 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: StreamBuilder<User?>(
+      debugShowCheckedModeBanner: false,
+      title: 'Eva - Cooperativa Gualaquiza',
+      theme: AppTheme.light,
+      // home: StreamBuilder<User?>(
+      //   stream: FirebaseAuth.instance.authStateChanges(),
+      //   builder: (context, snapshot) {
+      //     if (snapshot.hasData == true) {
+      //       final user = snapshot.data;
+      //       return HomePage(user: user);
+      //     } else {
+      //       return const MyHomePage(title: 'Cooperativa Gualaquiza');
+      //     }
+      //   },
+      // ),
+      home: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData == true) {
             final user = snapshot.data;
             return HomePage(user: user);
           } else {
-            return const MyHomePage(title: 'Cooperativa Gualaquiza');
+            return LoginPage();
           }
         },
       ),
