@@ -18,6 +18,8 @@ class HomePage extends StatelessWidget {
             SizedBox(height: 20),
             Text('Email: ${user!.email}'),
             SizedBox(height: 20),
+            Text('Usuario: ${user!.email!.split("@")[0]}'),
+            SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: () {
                 FirebaseAuth.instance.signOut();

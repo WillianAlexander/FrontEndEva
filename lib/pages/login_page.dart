@@ -13,10 +13,6 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Cooperativa Gualaquiza'),
-      //   centerTitle: true,
-      // ),
       body: Stack(
         children: [
           Container(
@@ -24,26 +20,6 @@ class _LoginPageState extends State<LoginPage> {
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(color: theme.primary),
           ),
-          // Container(
-          //   margin: const EdgeInsets.only(top: 26),
-          //   height: MediaQuery.of(context).size.height,
-          //   width: MediaQuery.of(context).size.width,
-          //   decoration: BoxDecoration(
-          //     color: theme.primary,
-          //     borderRadius: const BorderRadius.only(
-          //       topLeft: Radius.elliptical(40, 25),
-          //       topRight: Radius.elliptical(40, 25),
-          //     ),
-          //     boxShadow: [
-          //       BoxShadow(
-          //         color: Colors.black.withAlpha(51),
-          //         spreadRadius: 4,
-          //         blurRadius: 35,
-          //         offset: const Offset(0, 5), // changes position of shadow
-          //       ),
-          //     ],
-          //   ),
-          // ),
           Container(
             margin: const EdgeInsets.only(top: 85),
             height: MediaQuery.of(context).size.height,
@@ -75,16 +51,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
 
                   const SizedBox(height: 80),
-
-                  // const Text(
-                  //   'Bienvenido',
-                  //   style: TextStyle(
-                  //     fontSize: 32,
-                  //     fontWeight: FontWeight.bold,
-                  //     color: Colors.black87,
-                  //   ),
-                  // ),
-                  const SizedBox(height: 40),
 
                   // Botón
                   SizedBox(
@@ -139,11 +105,6 @@ class _LoginPageState extends State<LoginPage> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      // icon: Image.network(
-                      //   'https://img.icons8.com/color/48/000000/microsoft.png',
-                      //   width: 24,
-                      //   height: 24,
-                      // ),
                       icon: Image.asset(
                         'assets/microsoft.png',
                         width: 24,

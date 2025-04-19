@@ -1,5 +1,7 @@
-import 'package:eva/home_page.dart';
 import 'package:eva/pages/login_page.dart';
+import 'package:eva/pages/main_page.dart';
+import 'package:eva/pages/register_page.dart';
+import 'package:eva/services/user_service.dart';
 import 'package:eva/theme/apptheme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -30,28 +32,42 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Eva - Cooperativa Gualaquiza',
       theme: AppTheme.light,
-      // home: StreamBuilder<User?>(
-      //   stream: FirebaseAuth.instance.authStateChanges(),
-      //   builder: (context, snapshot) {
-      //     if (snapshot.hasData == true) {
-      //       final user = snapshot.data;
-      //       return HomePage(user: user);
-      //     } else {
-      //       return const MyHomePage(title: 'Cooperativa Gualaquiza');
-      //     }
-      //   },
-      // ),
       home: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData == true) {
             final user = snapshot.data;
-            return HomePage(user: user);
+            return FutureBuilder<bool>(
+              future: UserService().userExists(
+                user,
+              ), // Verifica si el usuario ya está registrado
+              builder: (context, userSnapshot) {
+                if (userSnapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (userSnapshot.hasError ||
+                    userSnapshot.data == false) {
+                  // Si no está registrado, redirige al formulario de registro
+                  return RegistrationPage(user: user);
+                } else {
+                  // Si está registrado, redirige a la página principal
+                  return MainPage(user: user);
+                }
+              },
+            );
           } else {
             return LoginPage();
           }
         },
       ),
+      routes: {
+        '/main': (context) => const MainPage(), // Define la ruta para MainPage
+        '/login':
+            (context) => const LoginPage(), // Define la ruta para LoginPage
+        '/register':
+            (context) => const RegistrationPage(
+              user: null,
+            ), // Define la ruta para RegistrationPage
+      },
     );
   }
 }

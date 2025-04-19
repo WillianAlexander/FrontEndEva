@@ -84,6 +84,7 @@ class AppTheme {
       ),
       colorScheme: const ColorScheme.light(
         primary: primaryColor,
+        primaryFixed: primaryMedium,
         secondary: accentYellow,
         background: background,
         surface: surface,
