@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:eva/models/user.dto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
@@ -21,29 +22,13 @@ class UserService {
   //   };
   // }
 
-  Future<bool> createUser({
-    required String usuario,
-    required String nombres,
-    required String apellidos,
-    required String identificacion,
-    required String correo,
-    required String password,
-    bool? activo = true,
-  }) async {
+  Future<bool> createUser(UsuarioDto usuarioDto) async {
     final url = Uri.parse('$baseUrl/usuarios');
 
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'usuario': usuario,
-        'nombres': nombres,
-        'apellidos': apellidos,
-        'correo': correo,
-        'identificacion': identificacion,
-        'password': password,
-        'activo': activo,
-      }),
+      body: jsonEncode(usuarioDto.toJson()),
     );
 
     if (response.statusCode == 201 || response.statusCode == 200) {

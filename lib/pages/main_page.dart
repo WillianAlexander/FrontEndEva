@@ -8,6 +8,10 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
+
+    // Validar que user y displayName no sean null
+    final displayName = user?.displayName!.split(" ")[2] ?? 'Willian';
+
     return Scaffold(
       body: Stack(
         children: [
@@ -42,8 +46,8 @@ class MainPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Bienvenido, \n${user!.displayName!.split(" ")[2]}',
-                    style: TextStyle(fontSize: 24),
+                    'Bienvenido, \n$displayName',
+                    style: const TextStyle(fontSize: 24),
                   ),
                 ],
               ),

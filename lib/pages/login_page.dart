@@ -1,3 +1,4 @@
+import 'package:eva/services/login_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -65,9 +66,21 @@ class _LoginPageState extends State<LoginPage> {
                         });
 
                         try {
-                          await FirebaseAuth.instance.signInWithProvider(
-                            provider,
-                          );
+                          // await FirebaseAuth.instance.signInWithProvider(
+                          //   provider,
+                          // );
+                          final userCredential = await FirebaseAuth.instance
+                              .signInWithProvider(provider);
+                          final credential =
+                              userCredential.credential as AuthCredential;
+                          final accessToken = credential.accessToken;
+                          if (accessToken != '') {
+                            final payload = LoginService().decodeToken(
+                              accessToken!,
+                            );
+                            print('family_name: ${payload['family_name']}');
+                            print('given_name: ${payload['given_name']}');
+                          }
                         } catch (e) {
                           if (e is FirebaseAuthException) {
                             // Handle specific FirebaseAuth exceptions
@@ -92,10 +105,14 @@ class _LoginPageState extends State<LoginPage> {
                             // Handle other types of exceptions
                             if (!context.mounted) return;
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('An unexpected error occurred.'),
+                              SnackBar(
+                                content: Text(
+                                  'An unexpected error occurred: $e',
+                                ),
                               ),
                             );
+
+                            print('Not FirebaseAuthException: $e');
                           }
                         }
                       },
