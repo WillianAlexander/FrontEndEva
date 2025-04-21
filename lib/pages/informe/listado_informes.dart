@@ -61,7 +61,7 @@ class _ListadoInformesState extends State<ListadoInformes> {
               children: [
                 // Text('Usuario: ${informe.usuarioEntrega}'),
                 Text(
-                  'Fecha de entrega: ${dateFormat.format(informe.fechaEntrega)}',
+                  'Fecha de entrega: ${DateFormatter.format(informe.fechaEntrega)}',
                 ),
                 Text('Estado: ${informe.estadoId}'),
               ],
@@ -77,7 +77,7 @@ class _ListadoInformesState extends State<ListadoInformes> {
                     await Provider.of<InformeProvider>(
                       context,
                       listen: false,
-                    ).descargarInforme(archivo, nombreArchivo, context);
+                    ).descargarYAbrirInforme(archivo, nombreArchivo, context);
                   } catch (e) {
                     if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(

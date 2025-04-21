@@ -46,4 +46,20 @@ class InformeProvider with ChangeNotifier {
       print('Error al descargar el informe: $e');
     }
   }
+
+  Future<void> descargarYAbrirInforme(
+    Uint8List contenido,
+    String nombreArchivo,
+    BuildContext context,
+  ) async {
+    try {
+      await _informeService.descargarYAbrirInforme(
+        contenido,
+        nombreArchivo,
+        context,
+      );
+    } catch (e) {
+      print('Error al descargar el informe: $e');
+    }
+  }
 }
