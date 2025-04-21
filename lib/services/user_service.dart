@@ -8,9 +8,9 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 class UserService {
-  final String baseUrl = 'http://192.168.0.128:3000';
+  final String baseUrl = 'http://192.168.112.131:3000';
 
-  Future<bool> createUser(UsuarioDto usuarioDto) async {
+  Future<bool> createUser(UsuarioDto usuarioDto, BuildContext context) async {
     final url = Uri.parse('$baseUrl/usuarios');
 
     final response = await http.post(
@@ -21,6 +21,11 @@ class UserService {
 
     if (response.statusCode == 201 || response.statusCode == 200) {
       print('Usuario creado correctamente');
+      if (!context.mounted) return true;
+      Provider.of<UsuarioProvider>(
+        context,
+        listen: false,
+      ).cargarDesdeJson(jsonDecode(response.body));
       return true;
     } else {
       print('Error al crear usuario: ${response.body}');

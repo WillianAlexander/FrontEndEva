@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
 
 class InformeService {
-  final String baseUrl = 'http://192.168.0.128:3000';
+  final String baseUrl = 'http://192.168.112.131:3000';
 
   Future<String?> listarInformes(Usuario? user, BuildContext context) async {
     try {

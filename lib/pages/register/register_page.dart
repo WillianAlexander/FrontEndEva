@@ -81,8 +81,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         identificacion: _identificacionController.text,
                       );
 
-                      final userService = UserService();
-                      final success = await userService.createUser(usuarioDto);
+                      final success = await UserService().createUser(
+                        usuarioDto,
+                        context,
+                      );
 
                       if (success) {
                         if (!context.mounted) return;
@@ -92,11 +94,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           ),
                         );
                         // Navegar a MainPage pasando el objeto User como argumento
-                        Navigator.pushReplacementNamed(
-                          context,
-                          '/main',
-                          arguments: widget.user,
-                        );
+                        Navigator.pushReplacementNamed(context, '/main');
                       } else {
                         if (!context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(

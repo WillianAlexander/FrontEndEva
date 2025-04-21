@@ -87,7 +87,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/main': (context) {
           // final user = ModalRoute.of(context)!.settings.arguments as User?;
-          return MainPage();
+          return RegisterReport();
         },
         '/login': (context) => const LoginPage(),
         // '/register': (context) => const RegistrationPage(user: null),
