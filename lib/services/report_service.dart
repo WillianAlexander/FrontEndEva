@@ -1,11 +1,19 @@
 import 'dart:io';
 import 'package:http/http.dart' as http;
 
+enum Estados {
+  enviado('E'),
+  recibido('R');
+
+  final String value;
+  const Estados(this.value);
+}
+
 class ReportService {
   Future<http.StreamedResponse> saveToDatabase(
     File file,
     String usuario,
-    String estado,
+    Estados estado,
     DateTime periodo,
     DateTime fentrega,
   ) async {
@@ -28,7 +36,7 @@ class ReportService {
 
       // Agregar otros datos al cuerpo de la solicitud
       request.fields['usuario'] = usuario;
-      request.fields['estado'] = estado;
+      request.fields['estado'] = estado.value;
       request.fields['periodo'] = periodo.toIso8601String();
       request.fields['fentrega'] = fentrega.toIso8601String();
 

@@ -13,17 +13,18 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       body: Stack(
         children: [
           Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
+            height: size.height,
+            width: size.width,
             decoration: BoxDecoration(color: theme.primary),
           ),
           Container(
             margin: const EdgeInsets.only(top: 85),
-            height: MediaQuery.of(context).size.height,
+            height: size.height,
             decoration: BoxDecoration(
               color: theme.background,
               borderRadius: const BorderRadius.only(
@@ -33,9 +34,9 @@ class _LoginPageState extends State<LoginPage> {
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withAlpha(51),
-                  spreadRadius: 4,
-                  blurRadius: 25,
-                  offset: const Offset(0, 4), // changes position of shadow
+                  spreadRadius: 2,
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
@@ -47,15 +48,19 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Image.asset(
                     'assets/coop.png',
-                    width:
-                        double.infinity, // ajusta el tamaño según lo necesites
+                    width: double.infinity,
+                    // height: 100, // Ajusta el tamaño según lo necesites
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Text('Error al cargar la imagen');
+                    },
                   ),
 
                   const SizedBox(height: 80),
 
                   // Botón
                   SizedBox(
-                    width: double.infinity,
+                    width: 180,
                     height: 50,
                     child: ElevatedButton.icon(
                       onPressed: () async {
@@ -66,21 +71,21 @@ class _LoginPageState extends State<LoginPage> {
                         });
 
                         try {
-                          // await FirebaseAuth.instance.signInWithProvider(
-                          //   provider,
-                          // );
-                          final userCredential = await FirebaseAuth.instance
-                              .signInWithProvider(provider);
-                          final credential =
-                              userCredential.credential as AuthCredential;
-                          final accessToken = credential.accessToken;
-                          if (accessToken != '') {
-                            final payload = LoginService().decodeToken(
-                              accessToken!,
-                            );
-                            print('family_name: ${payload['family_name']}');
-                            print('given_name: ${payload['given_name']}');
-                          }
+                          await FirebaseAuth.instance.signInWithProvider(
+                            provider,
+                          );
+                          // final userCredential = await FirebaseAuth.instance
+                          //     .signInWithProvider(provider);
+                          // final credential =
+                          //     userCredential.credential as AuthCredential;
+                          // final accessToken = credential.accessToken;
+                          // if (accessToken != '') {
+                          //   final payload = LoginService().decodeToken(
+                          //     accessToken!,
+                          //   );
+                          //   print('family_name: ${payload['family_name']}');
+                          //   print('given_name: ${payload['given_name']}');
+                          // }
                         } catch (e) {
                           if (e is FirebaseAuthException) {
                             // Handle specific FirebaseAuth exceptions
@@ -128,7 +133,8 @@ class _LoginPageState extends State<LoginPage> {
                         height: 24,
                       ),
                       label: const Text(
-                        'Sign in with Microsoft',
+                        // 'Sign in with Microsoft',
+                        'Ingresar',
                         style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
                     ),

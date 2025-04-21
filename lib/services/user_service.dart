@@ -1,26 +1,13 @@
 import 'dart:convert';
 import 'package:eva/models/user.dto.dart';
+import 'package:eva/provider/usuario/user.provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class UserService {
-  //final String baseUrl = 'http://10.0.2.2:3000'; // cambia por tu base real
   final String baseUrl = 'http://192.168.0.128:3000';
-  // Future<Map<String, dynamic>> parseUser(User? user) async {
-  //   final String nombres = user!.displayName!.split(" ").take(2).join(' ');
-  //   final String apellidos = user.displayName!.split(" ").sublist(2).join(' ');
-  //   final String correo = user.email!;
-  //   final String usuario = user.email!.split("@")[0];
-  //   return {
-  //     'usuario': usuario,
-  //     'nombres': nombres,
-  //     'apellidos': apellidos,
-  //     'correo': correo,
-  //     'identificacion': '1400960850',
-  //     'password': '1234567',
-  //     'activo': true,
-  //   };
-  // }
 
   Future<bool> createUser(UsuarioDto usuarioDto) async {
     final url = Uri.parse('$baseUrl/usuarios');
@@ -40,7 +27,7 @@ class UserService {
     }
   }
 
-  Future<bool> userExists(User? user) async {
+  Future<bool> userExists(User? user, BuildContext context) async {
     try {
       final usuario = user!.email!.split("@")[0];
 
@@ -60,6 +47,14 @@ class UserService {
         }
 
         print('El usuario ya existe! ==> ${response.body}');
+
+        if (!context.mounted) return true;
+
+        Provider.of<UsuarioProvider>(
+          context,
+          listen: false,
+        ).cargarDesdeJson(jsonDecode(response.body));
+
         return true;
       } else {
         print('Usuario no existe: ${response.body}');

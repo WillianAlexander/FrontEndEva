@@ -1,13 +1,16 @@
-import 'package:eva/pages/login_page.dart';
+import 'package:eva/pages/login/login_page.dart';
 import 'package:eva/pages/main_page.dart';
-import 'package:eva/pages/register_page.dart';
-import 'package:eva/pages/register_report.dart';
+import 'package:eva/pages/register/register_page.dart';
+import 'package:eva/pages/register/register_report.dart';
+import 'package:eva/provider/informe/informe.provider.dart';
+import 'package:eva/provider/usuario/user.provider.dart';
 import 'package:eva/services/user_service.dart';
 import 'package:eva/theme/apptheme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -22,7 +25,15 @@ void main() async {
     await FirebaseAuth.instance.signOut();
   }
 
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UsuarioProvider()),
+        ChangeNotifierProvider(create: (_) => InformeProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -44,42 +55,44 @@ class MyApp extends StatelessWidget {
       ],
       locale: const Locale('es'), // Establecer español como predeterminado
       theme: AppTheme.light,
-      // home: StreamBuilder(
-      //   stream: FirebaseAuth.instance.authStateChanges(),
-      //   builder: (context, snapshot) {
-      //     if (snapshot.hasData == true) {
-      //       final user = snapshot.data;
-      //       return FutureBuilder<bool>(
-      //         future: UserService().userExists(
-      //           user,
-      //         ), // Verifica si el usuario ya está registrado
-      //         builder: (context, userSnapshot) {
-      //           if (userSnapshot.connectionState == ConnectionState.waiting) {
-      //             return const Center(child: CircularProgressIndicator());
-      //           } else if (userSnapshot.hasError ||
-      //               userSnapshot.data == false) {
-      //             // Si no está registrado, redirige al formulario de registro
-      //             return RegistrationPage(user: user);
-      //           } else {
-      //             // Si está registrado, redirige a la página principal
-      //             return MainPage(user: user);
-      //           }
-      //         },
-      //       );
-      //     } else {
-      //       return LoginPage();
-      //     }
-      //   },
-      // ),
-      // routes: {
-      //   '/main': (context) {
-      //     final user = ModalRoute.of(context)!.settings.arguments as User?;
-      //     return MainPage(user: user);
-      //   },
-      //   '/login': (context) => const LoginPage(),
-      //   // '/register': (context) => const RegistrationPage(user: null),
-      // },
-      home: RegisterReport(),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData == true) {
+            final user = snapshot.data;
+            return FutureBuilder<bool>(
+              future: UserService().userExists(
+                user,
+                context,
+              ), // Verifica si el usuario ya está registrado
+              builder: (context, userSnapshot) {
+                if (userSnapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (userSnapshot.hasError ||
+                    userSnapshot.data == false) {
+                  // Si no está registrado, redirige al formulario de registro
+                  return RegistrationPage(user: user);
+                } else {
+                  // Si está registrado, redirige a la página principal
+                  // return MainPage(user: user);
+                  return RegisterReport();
+                }
+              },
+            );
+          } else {
+            return LoginPage();
+          }
+        },
+      ),
+      routes: {
+        '/main': (context) {
+          // final user = ModalRoute.of(context)!.settings.arguments as User?;
+          return MainPage();
+        },
+        '/login': (context) => const LoginPage(),
+        // '/register': (context) => const RegistrationPage(user: null),
+      },
+      // home: RegisterReport(),
     );
   }
 }

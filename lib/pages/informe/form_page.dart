@@ -1,8 +1,11 @@
 import 'dart:io';
 
+import 'package:eva/provider/state/user.state.dart';
+import 'package:eva/provider/usuario/user.provider.dart';
 import 'package:eva/services/report_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class FormPage extends StatefulWidget {
   const FormPage({super.key});
@@ -55,14 +58,16 @@ class _FormPageState extends State<FormPage> {
   }
 
   Future<void> _saveData(BuildContext context) async {
+    final Usuario? user =
+        Provider.of<UsuarioProvider>(context, listen: false).usuario;
     if (_selectedFile != null && _selectedDate != null) {
       try {
         // Mover la operación pesada a un hilo secundario
         final response = await Future.delayed(Duration.zero, () async {
           return await ReportService().saveToDatabase(
             _selectedFile!,
-            'WLUCERO',
-            'R',
+            user!.usuario,
+            Estados.enviado,
             DateTime.now(),
             _selectedDate!,
           );
@@ -80,13 +85,15 @@ class _FormPageState extends State<FormPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Datos guardados correctamente')),
           );
-
-          print('Archivo procesado correctamente.');
-        } else {
-          // Manejar errores del servidor
-          print(
-            'Error al guardar el archivo. Código de estado: ${response.statusCode}',
+        } else if (response.statusCode == 409) {
+          // Manejar error de clave duplicada
+          if (!context.mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Ya existe un informe con los mismos datos.'),
+            ),
           );
+        } else {
           if (!context.mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -115,64 +122,71 @@ class _FormPageState extends State<FormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Formulario')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Fecha de entrega:',
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    _selectedDate != null
-                        ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
-                        : 'No seleccionada',
-                  ),
-                  const SizedBox(width: 16),
-                  ElevatedButton(
-                    onPressed: () => _selectDate(context),
-                    child: const Icon(Icons.calendar_month),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Subir documento PDF:',
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(_pdfPath ?? 'No seleccionado'),
-                  const SizedBox(width: 16),
-                  ElevatedButton(
-                    onPressed: _pickPdf,
-                    child: const Text('Subir informe'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 32),
-              Center(
-                child: ElevatedButton(
-                  onPressed:
-                      () => _saveData(
-                        context,
-                      ), // Llama al método para guardar los datos
-                  child: const Text('Guardar'),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Fecha de entrega:',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _selectedDate != null
+                      ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
+                      : 'No seleccionada',
                 ),
+                const SizedBox(width: 16),
+                ElevatedButton(
+                  onPressed: () => _selectDate(context),
+                  child: const Icon(Icons.calendar_month),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Subir documento PDF:',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text(
+                    _pdfPath ?? 'No seleccionado',
+                    overflow:
+                        TextOverflow
+                            .ellipsis, // Trunca el texto si es muy largo
+                    maxLines: 1, // Limita el texto a una sola línea
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                ElevatedButton(
+                  onPressed: _pickPdf,
+                  child: const Text('Subir informe'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 32),
+            Center(
+              child: ElevatedButton.icon(
+                onPressed:
+                    () => _saveData(
+                      context,
+                    ), // Llama al método para guardar los datos
+                label: const Text('Guardar'),
+                icon: Icon(Icons.upload_file_rounded),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
