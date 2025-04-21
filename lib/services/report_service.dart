@@ -2,8 +2,9 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 enum Estados {
-  enviado('E'),
-  recibido('R');
+  evaluado('E'),
+  recibido('R'),
+  pendiente('P');
 
   final String value;
   const Estados(this.value);

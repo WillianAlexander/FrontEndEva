@@ -67,7 +67,7 @@ class _FormPageState extends State<FormPage> {
           return await ReportService().saveToDatabase(
             _selectedFile!,
             user!.usuario,
-            Estados.enviado,
+            Estados.recibido,
             DateTime.now(),
             _selectedDate!,
           );
