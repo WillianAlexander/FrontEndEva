@@ -43,7 +43,7 @@ class ReportService {
 
       // Enviar la solicitud
       final response = await request.send();
-      return response; // Devolver la respuesta al método que lo llama
+      return response;
     } catch (e) {
       print('Error al enviar el archivo al backend: $e');
       rethrow; // Propagar el error para manejarlo en el método que lo llama

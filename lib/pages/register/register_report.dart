@@ -1,5 +1,6 @@
 import 'package:eva/pages/informe/form_page.dart';
 import 'package:eva/pages/informe/listado_informes.dart';
+import 'package:eva/pages/main_page.dart';
 import 'package:flutter/material.dart';
 
 class RegisterReport extends StatefulWidget {
@@ -34,12 +35,13 @@ class _RegisterReportState extends State<RegisterReport> {
             ),
           );
         default:
-          return const Center(
-            child: Text(
-              'Bienvenido a la aplicación.',
-              style: TextStyle(fontSize: 18),
-            ),
-          );
+          // return const Center(
+          //   child: Text(
+          //     'Bienvenido a la aplicación.',
+          //     style: TextStyle(fontSize: 18),
+          //   ),
+          // );
+          return MainPage();
       }
     }
 

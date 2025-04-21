@@ -1,8 +1,8 @@
 import 'dart:typed_data';
-
 import 'package:eva/provider/informe/informe.provider.dart';
 import 'package:eva/provider/state/user.state.dart';
 import 'package:eva/provider/usuario/user.provider.dart';
+import 'package:eva/services/user_service.dart';
 import 'package:eva/utils/date_formater.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +32,7 @@ class _ListadoInformesState extends State<ListadoInformes> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
     final informeProvider = Provider.of<InformeProvider>(context);
     final user = Provider.of<UsuarioProvider>(context).usuario;
 
@@ -47,6 +48,19 @@ class _ListadoInformesState extends State<ListadoInformes> {
       return const Center(child: Text('No hay informes disponibles.'));
     }
 
+    String obtenerTextoEstado(String estado) {
+      switch (estado) {
+        case 'R':
+          return 'Recibido';
+        case 'P':
+          return 'Pendiente';
+        case 'E':
+          return 'Evaluado';
+        default:
+          return 'Desconocido';
+      }
+    }
+
     return ListView.builder(
       itemCount: informeProvider.informes.length,
       itemBuilder: (context, index) {
@@ -55,15 +69,50 @@ class _ListadoInformesState extends State<ListadoInformes> {
           margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: ListTile(
             // title: Text('Periodo: ${informe.periodo}'),
-            title: Text('Informe'),
+            title: Text('Informe Mensual'),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Text('Usuario: ${informe.usuarioEntrega}'),
+                FutureBuilder(
+                  future: UserService().getUserData(informe.usuarioEntrega),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Text('Cargando usuario...');
+                    } else if (snapshot.hasError) {
+                      return const Text('Error al cargar usuario');
+                    } else if (!snapshot.hasData || snapshot.data == null) {
+                      return const Text('Usuario no encontrado');
+                    }
+
+                    final usuario = snapshot.data as Usuario;
+                    return Text(
+                      'por: ${usuario.nombres.split(" ").first} ${usuario.apellidos.split(" ").first}',
+                    );
+                  },
+                ),
                 Text(
                   'Fecha de entrega: ${DateFormatter.format(informe.fechaEntrega)}',
                 ),
-                Text('Estado: ${informe.estadoId}'),
+                SizedBox(height: 4),
+                Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: theme.secondary,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      width: 100,
+                      child: Text(
+                        obtenerTextoEstado(informe.estadoId),
+                        style: TextStyle(
+                          color: theme.surface,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
             trailing: IconButton(
